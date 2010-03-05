@@ -37,3 +37,13 @@ h1 {
 ul.plain {
   list-style: none;
 }
+
+#speed_project_widget {
+  display: block;
+  margin-top: 100px;
+  opacity: 0.1;
+}
+
+#speed_project_widget:hover {
+  opacity: .5;
+}
