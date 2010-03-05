@@ -40,9 +40,17 @@ post '/voice' do
   last_recording = database[:recordings].order(:created_at).last
   verb = Twilio::Verb.new { |v|
     v.say "Welcome to Die Ull A Story"
-    v.play last_recording[:url]
-    v.say "At the beep, record the next line. Press star when you're finished"
-    v.record :finishOnKey => '*', :action => "recording?in_reply_to=#{last_recording[:id]}"
+    if last_recording
+      v.play last_recording[:url]
+      v.say "At the beep, record the next line. Press star when you're finished"
+    else
+      v.say "You get to make the first recording."
+      v.say "At the beep, record the next line. Press star when you're finished"
+    end
+
+    action = "recording"
+    action += "?in_reply_to=#{last_recording[:id]}" if last_recording
+    v.record :finishOnKey => '*', :action => action
     v.hangup
   }
   verb.response
@@ -50,7 +58,9 @@ end
 
 post '/recording' do
   @@logger.info params['RecordingUrl']  
-  database[:recordings].insert( :url => params['RecordingUrl'], :created_at => Time.now, :zip_code => params['CallerZip'], :previous_recording_id => params[:in_reply_to])
+  if params['Duration'].to_i > 3
+    database[:recordings].insert( :url => params['RecordingUrl'], :created_at => Time.now, :zip_code => params['CallerZip'], :previous_recording_id => params[:in_reply_to])
+  end
   # recording = request.body.read
   # @@logger.info recording.inspect
   # @@logger.info recording.class
