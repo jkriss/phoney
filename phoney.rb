@@ -4,6 +4,7 @@ require 'twilio'
 require 'logger'
 require 'sequel'
 require 'sinatra/sequel'
+require 'haml'
 
 Twilio.connect(ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN'])
 @@logger = Logger.new('tmp/development.log')
@@ -26,13 +27,8 @@ migration "add previous recording link" do
 end
 
 get '/' do
-  h = "<h1>#{database[:recordings].count} recordings</h1>"
-  h += "<ul>"
-  database[:recordings].each do |r|
-    h += "<li>From #{r[:zip_code]} (or thereabouts) at #{r[:created_at]}: <a href=\"#{r[:url]}\">listen</a></a>"
-  end
-  h += "</ul>"
-  h
+  @recordings = database[:recordings]
+  haml :index
 end
 
 post '/voice' do
