@@ -6,7 +6,10 @@
   
 %ul.plain
   - @recordings.each do |r|
-    %li= "From #{r[:zip_code]} (or thereabouts) on #{r[:created_at].strftime('%b %d at %I:%M %p')}: <a href=\"#{r[:url]}\">listen</a></a>"
+    %li
+      From
+      %a{ :href => "http://maps.google.com/maps?q=#{r[:zip_code]}", :target => '_blank' }= r[:zip_code]
+      = "(or thereabouts) on #{r[:created_at].strftime('%b %d at %I:%M %p')}: <a href=\"#{r[:url]}\">listen</a></a>"
 
 :plain
   <script type="text/javascript" src="http://www.fffff.at/widgets/speed-project/speed-project.js"></script>
