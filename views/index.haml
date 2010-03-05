@@ -38,7 +38,7 @@
       = "(or thereabouts) on #{r[:created_at].strftime('%b %d at %I:%M %p')}:"
       - player_name = "audioplayer_#{idx+=1}"
       %span.player{ :id => player_name }
-        %a <a href=\"#{r[:url]}.mp3\">listen</a></a>"
+        %a{ :href => "#{r[:url]}.mp3" } listen
       
       :erb
         <script type="text/javascript">  
