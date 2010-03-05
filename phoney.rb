@@ -21,7 +21,7 @@ end
 
 migration "add previous recording link" do
   database.alter_table :recordings do
-    add_column :previous_recording_id, :string
+    add_column :previous_recording_id, :varchar
   end
 end
 
