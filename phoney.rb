@@ -5,7 +5,7 @@ require 'logger'
 require 'sequel'
 
 Twilio.connect(ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN'])
-@@logger = Logger.new('development.log')
+@@logger = Logger.new('tmp/development.log')
 
 DB = Sequel.connect(ENV['DATABASE_URL'] || 'sqlite://my.db')
 
