@@ -47,3 +47,11 @@ ul.plain {
 #speed_project_widget:hover {
   opacity: .5;
 }
+
+object {
+  vertical-align: -20%;
+}
+
+li {
+  line-height: 30px;
+}

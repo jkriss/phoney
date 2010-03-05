@@ -1,5 +1,14 @@
 :plain
   <script type="text/javascript" src="/audio-player.js"></script>
+  <script type="text/javascript">  
+    AudioPlayer.setup("/player.swf", {  
+        width: 290,  
+        initialvolume: 100,  
+        transparentpagebg: "yes",  
+        left: "000000",  
+        lefticon: "FFFFFF"  
+    });  
+</script>  
 
 %h1 Call 206.734.3852
 
@@ -7,22 +16,38 @@
   = @recordings.count
   recordings
   
+%h2#listen
+  Listen to all
+
+  #play_all.player
+    :erb
+      <script type="text/javascript">  
+      AudioPlayer.embed("play_all", {  
+          soundFile: "<%= @recordings.collect { |r| r[:url]+".mp3" }.join(',') %>",  
+          titles: "<%= @recordings.collect { |r| r[:zip_code]}.join(',') %>",    
+          autostart: "no"  
+      });  
+      </script> 
+  
 %ul.plain
+  - idx = 0
   - @recordings.each do |r|
     %li
       From
       %a{ :href => "http://maps.google.com/maps?q=#{r[:zip_code]}", :target => '_blank' }= r[:zip_code]
-      = "(or thereabouts) on #{r[:created_at].strftime('%b %d at %I:%M %p')}: <a href=\"#{r[:url]}.mp3\">listen</a></a>"
+      = "(or thereabouts) on #{r[:created_at].strftime('%b %d at %I:%M %p')}:"
+      - player_name = "audioplayer_#{idx+=1}"
+      %span.player{ :id => player_name }
+        %a <a href=\"#{r[:url]}.mp3\">listen</a></a>"
       
       :erb
-        <object type="application/x-shockwave-flash" data="/player.swf" id="audioplayer1" height="24" width="290">
-        <param name="movie" value="/player.swf">
-        <param name="FlashVars" value="playerID=audioplayer1&soundFile=<%= r[:url] %>.mp3">
-        <param name="quality" value="high">
-        <param name="titles" value="recording">
-        <param name="menu" value="false">
-        <param name="wmode" value="transparent">
-        </object>
+        <script type="text/javascript">  
+        AudioPlayer.embed("<%= player_name %>", {  
+            soundFile: "<%= r[:url] %>.mp3",  
+            titles: "recording",    
+            autostart: "no"  
+        });  
+        </script> 
 
 :plain
   <script type="text/javascript" src="http://www.fffff.at/widgets/speed-project/speed-project.js"></script>
