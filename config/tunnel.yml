@@ -1,0 +1,6 @@
+# http://web1.tunnlr.com:10182/
+
+public_host_username: tunnlr569
+public_host: ssh1.tunnlr.com
+public_port: 10182
+local_port: 9393
