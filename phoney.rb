@@ -7,9 +7,9 @@ require 'sequel'
 Twilio.connect(ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN'])
 @@logger = Logger.new('tmp/development.log')
 
-DB = Sequel.connect(ENV['DATABASE_URL'] || 'sqlite://my.db')
+@@DB = Sequel.connect(ENV['DATABASE_URL'] || 'sqlite://my.db')
 
-DB.create_table? :recordings do
+@@DB.create_table? :recordings do
   primary_key :id
   String :url
   String :zip_code
@@ -17,9 +17,9 @@ DB.create_table? :recordings do
 end
 
 get '/' do
-  h = "<h1>#{DB[:recordings].count} recordings</h1>"
+  h = "<h1>#{@@DB[:recordings].count} recordings</h1>"
   h += "<ul>"
-  DB[:recordings].each do |r|
+  @@DB[:recordings].each do |r|
     h += "<li>From #{r[:zip_code]} (or thereabouts) at #{r[:created_at]}: <a href=\"#{r[:url]}\">listen</a></a>"
   end
   h += "</ul>"
@@ -40,7 +40,7 @@ end
 post '/recording' do
   @@logger.info params['RecordingUrl']
   
-  DB[:recordings].insert( :url => params['RecordingUrl'], :created_at => Time.now, :zip_code => params['CallerZip'])
+  @@DB[:recordings].insert( :url => params['RecordingUrl'], :created_at => Time.now, :zip_code => params['CallerZip'])
   # recording = request.body.read
   # @@logger.info recording.inspect
   # @@logger.info recording.class
