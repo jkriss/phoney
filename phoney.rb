@@ -3,23 +3,26 @@ require 'sinatra'
 require 'twilio'
 require 'logger'
 require 'sequel'
+require 'sinatra/sequel'
 
 Twilio.connect(ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN'])
 @@logger = Logger.new('tmp/development.log')
 
-@@DB = Sequel.connect(ENV['DATABASE_URL'] || 'sqlite://my.db')
+set :database, ENV['DATABASE_URL'] || 'sqlite://my.db'
 
-@@DB.create_table? :recordings do
-  primary_key :id
-  String :url
-  String :zip_code
-  Time :created_at
+migration "create recordings table" do
+  database.create_table :recordings do
+    primary_key :id
+    String :url
+    String :zip_code
+    Time :created_at
+  end
 end
 
 get '/' do
-  h = "<h1>#{@@DB[:recordings].count} recordings</h1>"
+  h = "<h1>#{database[:recordings].count} recordings</h1>"
   h += "<ul>"
-  @@DB[:recordings].each do |r|
+  database[:recordings].each do |r|
     h += "<li>From #{r[:zip_code]} (or thereabouts) at #{r[:created_at]}: <a href=\"#{r[:url]}\">listen</a></a>"
   end
   h += "</ul>"
@@ -40,7 +43,7 @@ end
 post '/recording' do
   @@logger.info params['RecordingUrl']
   
-  @@DB[:recordings].insert( :url => params['RecordingUrl'], :created_at => Time.now, :zip_code => params['CallerZip'])
+  database[:recordings].insert( :url => params['RecordingUrl'], :created_at => Time.now, :zip_code => params['CallerZip'])
   # recording = request.body.read
   # @@logger.info recording.inspect
   # @@logger.info recording.class
