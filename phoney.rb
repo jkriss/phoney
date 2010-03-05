@@ -33,7 +33,7 @@ post '/voice' do
   content_type :xml
   last_recording = database[:recordings].order(:created_at).last
   verb = Twilio::Verb.new { |v|
-    v.say "Welcome to Die Ull A Story"
+    v.say "Welcome to Phone Tag"
     if last_recording
       v.play last_recording[:url]
       v.say "At the beep, record the next line. Press star when you're finished"
