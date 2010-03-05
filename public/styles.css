@@ -13,6 +13,14 @@ a {
   color: #e0f4fb;
 }
 
+a:visited {
+  color: #a3cad8;
+}
+
+a:active {
+  color: #fff;
+}
+
 h1, h2, h3, h4 {
   margin-bottom: 20px;
   color: #437588;
