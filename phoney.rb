@@ -1,13 +1,11 @@
 require 'rubygems'
 require 'sinatra'
 require 'twilio'
-require 'logger'
 require 'sequel'
 require 'sinatra/sequel'
 require 'haml'
 
 Twilio.connect(ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN'])
-@@logger = Logger.new('tmp/development.log')
 
 set :database, ENV['DATABASE_URL'] || 'sqlite://my.db'
 
@@ -53,13 +51,9 @@ post '/voice' do
 end
 
 post '/recording' do
-  @@logger.info params['RecordingUrl']  
   if params['Duration'].to_i > 3
     database[:recordings].insert( :url => params['RecordingUrl'], :created_at => Time.now, :zip_code => params['CallerZip'], :previous_recording_id => params[:in_reply_to])
   end
-  # recording = request.body.read
-  # @@logger.info recording.inspect
-  # @@logger.info recording.class
   content_type :xml
   verb = Twilio::Verb.new { |v|
     v.say "Thank you"
