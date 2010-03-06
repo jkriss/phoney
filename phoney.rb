@@ -4,6 +4,7 @@ require 'twilio'
 require 'sequel'
 require 'sinatra/sequel'
 require 'haml'
+require 'builder'
 
 Twilio.connect(ENV['TWILIO_ACCOUNT_SID'], ENV['TWILIO_AUTH_TOKEN'])
 
@@ -27,6 +28,31 @@ end
 get '/' do
   @recordings = database[:recordings]
   haml :index
+end
+
+get '/feed' do
+  @recordings = database[:recordings]
+  content_type 'application/xml', :charset => 'utf-8'
+  builder do |xml|
+    xml.instruct! :xml, :version => '1.0'
+    xml.rss :version => "2.0" do
+      xml.channel do
+        xml.title "Phone Tag"
+        xml.description "Messages from strangers."
+        xml.link "http://phonetag.heroku.com"
+        
+        @recordings.each do |r|
+          xml.item do
+            xml.title "Message from #{r[:zip_code]}"
+            xml.link r[:url]
+            xml.description "<p>#{r[:zip_code]} (or thereabouts) on #{r[:created_at].strftime('%b %d at %I:%M %p')}</p><p> <a href=\"#{r[:url]}.mp3\">> listen</a></p>"
+            xml.pubDate Time.parse(r[:created_at].to_s).rfc822()
+            xml.guid "http://phonetag.heroku.com/recordings/#{r[:id]}"
+          end
+        end
+      end
+    end
+  end
 end
 
 post '/voice' do
