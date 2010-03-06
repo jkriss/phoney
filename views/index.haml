@@ -33,6 +33,7 @@
   - idx = 0
   - @recordings.each do |r|
     %li
+      %a{ :name => r[:id] }
       From
       %a{ :href => "http://maps.google.com/maps?q=#{r[:zip_code]}", :target => '_blank' }= r[:zip_code]
       = "(or thereabouts) on #{r[:created_at].strftime('%b %d at %I:%M %p')}:"
