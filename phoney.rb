@@ -47,7 +47,7 @@ get '/feed' do
             xml.link r[:url]
             xml.description "<p>#{r[:zip_code]} (or thereabouts) on #{r[:created_at].strftime('%b %d at %I:%M %p')}</p><p> <a href=\"#{r[:url]}.mp3\">> listen</a></p>"
             xml.pubDate Time.parse(r[:created_at].to_s).rfc822()
-            xml.guid "http://phonetag.heroku.com/recordings/#{r[:id]}"
+            xml.guid "http://phonetag.heroku.com/##{r[:id]}"
           end
         end
       end
